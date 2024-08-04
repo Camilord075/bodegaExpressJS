@@ -4,10 +4,10 @@ import { PedidoController } from "./PedidoController.js";
 export class ListaController {
     static async getLista(id) {
         const findPedido = PedidoController.findOne(id)
-        if (!findPedido) throw new Error('This Pedido does not exists')
+        if (!findPedido[0]) throw new Error('This Pedido does not exists')
 
         const [lista] = await pool.query('SELECT producto.nombre AS nombre_producto, listas.cantidad FROM listas INNER JOIN producto ON listas.id_producto = producto.id WHERE id_pedido = ?;', [id])
-    
+
         return lista
     }
 

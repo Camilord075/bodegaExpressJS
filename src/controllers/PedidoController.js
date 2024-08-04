@@ -28,11 +28,13 @@ export class PedidoController {
 
         for(const producto of lista) {
             const findProducto = await ProductoController.findOne(producto[0])
-            if (!findProducto) throw new Error('This Producto does not exists')
+            if (!findProducto) {
+                const [revert] = await pool.query('DELETE FROM pedido WHERE id = ?', [result.insertId])
+                throw new Error('One Producto on the Lista does not exists')
+            }
 
-            const listInsertResult = ListaController.insertLista(result.insertId, producto[0], producto[1])
+            const listInsertResult = await ListaController.insertLista(result.insertId, producto[0], producto[1])
         }
-
         return result
     }
 }
