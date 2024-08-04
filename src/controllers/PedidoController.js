@@ -20,6 +20,6 @@ export class PedidoController {
 
         const [result] = await pool.query('INSERT INTO pedido (id_responsable) VALUES (?);', [idResponsable])
 
-        return result[0]
+        return result
     }
 }
