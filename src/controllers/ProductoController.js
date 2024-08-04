@@ -7,8 +7,12 @@ export class ProductoController {
         return productos
     }
 
-    static async getProductos(id) {
+    static async findOne(id) {
         const [producto] = await pool.query('SELECT * FROM producto WHERE id = ?', [id])
+
+        if (producto.length <= 0) {
+            return false
+        }
 
         return producto[0]
     }

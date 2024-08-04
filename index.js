@@ -27,7 +27,7 @@ app.get('/producto', async (req, res) => {
 })
 
 app.get('/producto/:id', async (req, res) => {
-    const producto = await ProductoController.getProductos(req.params.id)
+    const producto = await ProductoController.findOne(req.params.id)
 
     res.send(producto)
 })
@@ -39,26 +39,30 @@ app.get('/pedidos', async (req, res) => {
 })
 
 app.get('/pedidos/:id', async (req, res) => {
-    const pedido = await PedidoController.getPedido(req.params.id)
+    const pedido = await PedidoController.findOne(req.params.id)
 
     res.send(pedido)
 })
 
 app.get('/lista/:id', async (req, res) => {
-    const lista = await ListaController.getLista(req.params.id)
+    try {
+        const lista = await ListaController.getLista(req.params.id)
 
-    res.send(lista)
+        res.send(lista)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
 })
 
 app.post('/pedidos', async (req, res) => {
-    const { idResponsable } = req.body
+    const { idResponsable, lista } = req.body
 
     try {
-        const result = await PedidoController.newPedido(idResponsable)
+        const result = await PedidoController.newPedido(idResponsable, lista)
 
         res.send(result)
     } catch (error) {
-        res.status(401).send(error.message)
+        res.status(404).send(error.message)
     }
 })
 
