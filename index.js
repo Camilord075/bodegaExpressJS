@@ -15,8 +15,12 @@ app.get('/responsable', async (req, res) => {
 })
 
 app.get('/responsable/:id', async (req, res) => {
-    const responsable = await ResponsableController.getResponsable(req.params.id)
+    const responsable = await ResponsableController.findOne(req.params.id)
 
+    if (!responsable) {
+        res.status(404).send('This Responsable does not exists')
+    }
+    
     res.send(responsable)
 })
 
@@ -29,6 +33,10 @@ app.get('/producto', async (req, res) => {
 app.get('/producto/:id', async (req, res) => {
     const producto = await ProductoController.findOne(req.params.id)
 
+    if (!producto) {
+        res.status(404).send('This Producto does not exists')
+    }
+
     res.send(producto)
 })
 
@@ -40,6 +48,10 @@ app.get('/pedidos', async (req, res) => {
 
 app.get('/pedidos/:id', async (req, res) => {
     const pedido = await PedidoController.findOne(req.params.id)
+
+    if (!pedido) {
+        res.status(404).send('This Pedido does not exists')
+    }
 
     res.send(pedido)
 })
@@ -59,6 +71,31 @@ app.post('/pedidos', async (req, res) => {
 
     try {
         const result = await PedidoController.newPedido(idResponsable, lista)
+
+        res.send(result)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+})
+
+app.patch('/pedidos/:id', async (req, res) => {
+    const idPedido = req.params.id
+    const { lista } = req.body
+
+    try {
+        const result = await PedidoController.updatePedido(idPedido, lista)
+
+        res.send(result)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+})
+
+app.delete('/pedidos/:id', async (req, res) => {
+    const idPedido = req.params.id
+
+    try {
+        const result = await PedidoController.deletePedido(idPedido)
 
         res.send(result)
     } catch (error) {

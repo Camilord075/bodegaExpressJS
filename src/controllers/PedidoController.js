@@ -24,17 +24,41 @@ export class PedidoController {
         const responsable = await ResponsableController.findOne(idResponsable)
         if (!responsable) throw new Error('This Responsable does not exists')
 
-        const [result] = await pool.query('INSERT INTO pedido (id_responsable) VALUES (?);', [idResponsable])
+        const [insertPedido] = await pool.query('INSERT INTO pedido (id_responsable) VALUES (?);', [idResponsable])
 
         for(const producto of lista) {
-            const findProducto = await ProductoController.findOne(producto[0])
-            if (!findProducto) {
-                const [revert] = await pool.query('DELETE FROM pedido WHERE id = ?', [result.insertId])
-                throw new Error('One Producto on the Lista does not exists')
+            try {
+                const insertLista = await ListaController.insertLista(result.insertId, producto[0], producto[1])
+            } catch (error) {
+                const [revert] = pool.query('DELETE FROM pedido WHERE id = ?', [result.insertId])
+                throw new Error(error.message)
             }
-
-            const listInsertResult = await ListaController.insertLista(result.insertId, producto[0], producto[1])
         }
-        return result
+
+        return insertPedido
+    }
+
+    static async updatePedido (idPedido, lista) {
+        for (const producto of lista) {
+            try {
+                const result = await ListaController.updateLista(idPedido, producto[0], producto[1])
+
+                return result
+            } catch (error) {
+                throw new Error(error.message)
+            }
+        }
+    }
+
+    static async deletePedido (idPedido) {
+        try {
+            const deleteLista = await ListaController.deleteLista(idPedido)
+        } catch (error) {
+            throw new Error(error.message)
+        }
+
+        const deletePedido = await pool.query('DELETE FROM pedido WHERE id = ?;', [idPedido])
+
+        return deletePedido[0]
     }
 }
