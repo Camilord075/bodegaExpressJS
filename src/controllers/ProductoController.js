@@ -16,4 +16,34 @@ export class ProductoController {
 
         return producto[0]
     }
+
+    static async insertProducto(nombre, cantidadDisponible) {
+        const insert = await pool.query('INSERT INTO producto (nombre, cantidad_disponible) VALUES (?, ?);', [nombre, cantidadDisponible])
+
+        return insert[0]
+    }
+
+    static async updateProducto(id, nombre, cantidadDisponible) {
+        const findProducto = await this.findOne(id)
+
+        if (!findProducto) {
+            throw new Error('This Producto does not exists')
+        }
+
+        const updateResult = await pool.query('UPDATE producto set nombre = IFNULL(?, nombre), cantidad_disponible = IFNULL(?, cantidad_disponible) WHERE id = ?;', [nombre, cantidadDisponible, id])
+
+        return updateResult[0]
+    }
+
+    static async deleteProducto(id) {
+        const findProducto = await this.findOne(id)
+
+        if (!findProducto) {
+            throw new Error('This Producto does not exists')
+        }
+
+        const deleteResult = await pool.query('DELETE FROM producto WHERE id = ?;', [id])
+
+        return deleteResult[0]
+    }
 }

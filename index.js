@@ -77,6 +77,39 @@ app.get('/producto/:id', async (req, res) => {
     res.send(producto)
 })
 
+app.post('/producto', async (req, res) => {
+    const { nombre, cantidadDisponible } = req.body
+
+    const result = await ProductoController.insertProducto(nombre, cantidadDisponible)
+
+    res.send(result)
+})
+
+app.patch('/producto/:id', async (req, res) => {
+    const idProducto = req.params.id
+    const { nombre, cantidadDisponible } = req.body
+
+    try {
+        const result = await ProductoController.updateProducto(idProducto, nombre, cantidadDisponible)
+
+        res.send(result)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+})
+
+app.delete('/producto/:id', async (req, res) => {
+    const idProducto = req.params.id
+    
+    try {
+        const result = await ProductoController.deleteProducto(idProducto)
+
+        res.send(result)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+})
+
 app.get('/pedidos', async (req, res) => {
     const pedidos = await PedidoController.getPedidos()
 
