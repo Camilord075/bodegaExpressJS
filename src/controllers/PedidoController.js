@@ -1,6 +1,5 @@
 import { pool } from "../database/database.js";
 import { ListaController } from "./ListaController.js";
-import { ProductoController } from "./ProductoController.js";
 import { ResponsableController } from "./ResponsableController.js";
 
 export class PedidoController {
