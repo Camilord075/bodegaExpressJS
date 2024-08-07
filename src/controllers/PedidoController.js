@@ -27,9 +27,10 @@ export class PedidoController {
 
         for(const producto of lista) {
             try {
-                const insertLista = await ListaController.insertLista(result.insertId, producto[0], producto[1])
+                const insertLista = await ListaController.insertLista(insertPedido.insertId, producto.idProducto, producto.cantidad)
             } catch (error) {
-                const [revert] = pool.query('DELETE FROM pedido WHERE id = ?', [result.insertId])
+                const revertLista = await ListaController.deleteLista(insertPedido.insertId)
+                const [revertPedido] = await pool.query('DELETE FROM pedido WHERE id = ?', [insertPedido.insertId])
                 throw new Error(error.message)
             }
         }
