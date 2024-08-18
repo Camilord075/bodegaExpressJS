@@ -4,13 +4,13 @@ import { ResponsableController } from "./ResponsableController.js";
 
 export class PedidoController {
     static async getPedidos() {
-        const [pedidos] = await pool.query('SELECT pedido.id, pedido.id_responsable, responsable.nombre AS nombre_responsable FROM pedido INNER JOIN responsable ON pedido.id_responsable = responsable.id;')
+        const [pedidos] = await pool.query('SELECT pedido.id, pedido.id_responsable, responsable.nombre AS nombre_responsable, pedido.status FROM pedido INNER JOIN responsable ON pedido.id_responsable = responsable.id;')
 
         return pedidos
     }
 
     static async findOne(id) {
-        const [pedido] = await pool.query('SELECT pedido.id, pedido.id_responsable, responsable.nombre AS nombre_responsable FROM pedido INNER JOIN responsable ON pedido.id_responsable = responsable.id WHERE pedido.id = ?;', [id])
+        const [pedido] = await pool.query('SELECT pedido.id, pedido.id_responsable, responsable.nombre AS nombre_responsable, pedido.status FROM pedido INNER JOIN responsable ON pedido.id_responsable = responsable.id WHERE pedido.id = ?;', [id])
 
         if (pedido.length <= 0) {
             return false
