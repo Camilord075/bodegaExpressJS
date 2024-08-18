@@ -61,4 +61,14 @@ export class PedidoController {
 
         return deletePedido[0]
     }
+
+    static async checkPedido(idPedido) {
+        try {
+            const [check] = await pool.query('UPDATE pedido SET status = 1 WHERE id = ?;', [idPedido])
+
+            return check
+        } catch (error) {
+            throw new Error('This Pedido does not exists')
+        }
+    }
 }

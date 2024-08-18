@@ -61,4 +61,16 @@ pedidoRouter.delete('/pedidos/:id', async (req, res) => {
     }
 })
 
+pedidoRouter.patch('/pedidos/checking/:id', async (req, res) => {
+    const idPedido = req.params.id
+
+    try {
+        const result = new Respond(1, await PedidoController.checkPedido(idPedido))
+
+        res.send(result)
+    } catch (error) {
+        res.status(404).send(new Respond(0, error.message))
+    }
+})
+
 export default pedidoRouter
