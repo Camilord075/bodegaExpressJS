@@ -1,5 +1,5 @@
 import express from 'express'
-import { APP_PORT } from './config.js'
+import { APP_PORT } from './configEnv.js'
 import pedidoRouter from './src/routes/Pedido.routes.js'
 import listaRouter from './src/routes/Lista.routes.js'
 import productoRouter from './src/routes/Producto.routes.js'
