@@ -8,10 +8,10 @@ import responsableRouter from './src/routes/Responsable.routes.js'
 const app = express()
 app.use(express.json())
 
-app.use(responsableRouter)
-app.use(productoRouter)
-app.use(listaRouter)
-app.use(pedidoRouter)
+app.use('/api', responsableRouter)
+app.use('/api', productoRouter)
+app.use('/api', listaRouter)
+app.use('/api', pedidoRouter)
 
 app.listen(APP_PORT, () => {
     console.log(`Listening on port ${APP_PORT}`)
