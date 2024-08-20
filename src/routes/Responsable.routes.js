@@ -57,10 +57,4 @@ responsableRouter.delete('/responsable/:id', async (req, res) => {
     }
 })
 
-responsableRouter.get('/responsable/mierda/:id', (req, res) => {
-    const id = req.params.id
-
-    res.send(new Respond(1, id))
-})
-
 export default responsableRouter
