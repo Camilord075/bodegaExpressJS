@@ -22,8 +22,6 @@ export const verifySession = (req, res, next) => {
     next()
 }
 
-usuarioRouter.use(verifySession)
-
 usuarioRouter.post('/register', async (req, res) => {
     const { nombre, correo, pass } = req.body
 
