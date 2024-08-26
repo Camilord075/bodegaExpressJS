@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { ProductoController } from "../controllers/ProductoController.js";
 import { Respond } from "../controllers/responds/RespondController.js";
+import { verifySession } from "./Usuario.routes.js";
+import cookieParser from "cookie-parser";
 
 const productoRouter = Router()
+
+productoRouter.use(cookieParser())
 
 productoRouter.get('/producto', async (req, res) => {
     const productos = new Respond(1, await ProductoController.getProductos())
@@ -20,12 +24,17 @@ productoRouter.get('/producto/:id', async (req, res) => {
     res.send(producto)
 })
 
-productoRouter.post('/producto', async (req, res) => {
-    const { nombre, cantidadDisponible } = req.body
-
-    const result = new Respond(1, await ProductoController.insertProducto(nombre, cantidadDisponible))
-
-    res.send(result)
+productoRouter.post('/producto', verifySession, async (req, res) => {
+    const { user } = req.session
+    
+    if (!user) {
+        res.status(403).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const { nombre, cantidadDisponible } = req.body
+        const result = new Respond(1, await ProductoController.insertProducto(nombre, cantidadDisponible))
+    
+        res.send(result)
+    }
 })
 
 productoRouter.patch('/producto/:id', async (req, res) => {

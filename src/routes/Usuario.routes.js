@@ -8,7 +8,8 @@ import jwt from 'jsonwebtoken'
 const usuarioRouter = Router()
 
 usuarioRouter.use(cookieParser())
-usuarioRouter.use((req, res, next) => {
+
+export const verifySession = (req, res, next) => {
     const token = req.cookies.access_token
     req.session = { user: null }
 
@@ -19,7 +20,9 @@ usuarioRouter.use((req, res, next) => {
     }
 
     next()
-})
+}
+
+usuarioRouter.use(verifySession)
 
 usuarioRouter.post('/register', async (req, res) => {
     const { nombre, correo, pass } = req.body
@@ -37,10 +40,10 @@ usuarioRouter.post('/login', async (req, res) => {
     const { correo, pass } = req.body
 
     try {
-        const user = new Respond(1, await UsuarioController.signIn(correo, pass))
+        const user = await UsuarioController.signIn(correo, pass)
 
         const token = jwt.sign({
-            id: user.respond.id, nombre: user.respond.nombre, rol: user.respond.rol},
+            id: user.id, nombre: user.nombre, rol: user.rol},
             JWT_SECRET_KEY,
             {
                 expiresIn: '1h'
@@ -56,6 +59,10 @@ usuarioRouter.post('/login', async (req, res) => {
     } catch (error) {
         res.status(401).send(error.message)
     }
+})
+
+usuarioRouter.post('/logout', (req, res) => {
+    res.clearCookie('access_token').json({ message: 'Logout successful' })
 })
 
 export default usuarioRouter
