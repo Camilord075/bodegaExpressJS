@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { PedidoController } from "../controllers/PedidoController.js";
 import { Respond } from "../controllers/responds/RespondController.js";
+import { verifySession } from "./Usuario.routes.js";
+import cookieParser from "cookie-parser";
 
 const pedidoRouter = Router()
+
+pedidoRouter.use(cookieParser())
 
 pedidoRouter.get('/pedidos', async (req, res) => {
     const pedidos = await PedidoController.getPedidos()
@@ -61,15 +65,21 @@ pedidoRouter.delete('/pedidos/:id', async (req, res) => {
     }
 })
 
-pedidoRouter.patch('/pedidos/checking/:id', async (req, res) => {
-    const idPedido = req.params.id
+pedidoRouter.patch('/pedidos/checking/:id', verifySession, async (req, res) => {
+    const { user } = req.session
 
-    try {
-        const result = new Respond(1, await PedidoController.checkPedido(idPedido))
-
-        res.send(result)
-    } catch (error) {
-        res.status(404).send(new Respond(0, error.message))
+    if (!user) {    
+        res.status(403).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const idPedido = req.params.id
+    
+        try {
+            const result = new Respond(1, await PedidoController.checkPedido(idPedido))
+    
+            res.send(result)
+        } catch (error) {
+            res.status(404).send(new Respond(0, error.message))
+        }
     }
 })
 

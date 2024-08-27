@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { ResponsableController } from "../controllers/ResponsableController.js";
 import { Respond } from "../controllers/responds/RespondController.js";
+import { verifySession } from "./Usuario.routes.js";
+import cookieParser from "cookie-parser";
 
 const responsableRouter = Router()
+
+responsableRouter.use(cookieParser())
 
 responsableRouter.get('/responsable', async (req, res) => {
     const responsables = new Respond(1, await ResponsableController.getResponsables())
@@ -20,40 +24,58 @@ responsableRouter.get('/responsable/:id', async (req, res) => {
     res.send(responsable)
 })
 
-responsableRouter.post('/responsable', async (req, res) => {
-    const { id, nombre } = req.body
+responsableRouter.post('/responsable', verifySession, async (req, res) => {
+    const { user } = req.session
 
-    try {
-        const result = new Respond(1, await ResponsableController.insertResponsable(id, nombre))
-
-        res.send(result)
-    } catch (error) {
-        res.status(500).send(new Respond(0, error.message))
+    if (!user) {    
+        res.status(403).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const { id, nombre } = req.body
+    
+        try {
+            const result = new Respond(1, await ResponsableController.insertResponsable(id, nombre))
+    
+            res.send(result)
+        } catch (error) {
+            res.status(500).send(new Respond(0, error.message))
+        }
     }
 })
 
-responsableRouter.patch('/responsable/:id', async (req, res) => {
-    const idResposable = req.params.id
-    const { nombre } = req.body
+responsableRouter.patch('/responsable/:id', verifySession, async (req, res) => {
+    const { user } = req.session
 
-    try {
-        const result = new Respond(1, await ResponsableController.updateResponsable(idResposable, nombre))
-
-        res.send(result)
-    } catch (error) {
-        res.status(404).send(new Respond(0, error.message))
+    if (!user) {    
+        res.status(403).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const idResposable = req.params.id
+        const { nombre } = req.body
+    
+        try {
+            const result = new Respond(1, await ResponsableController.updateResponsable(idResposable, nombre))
+    
+            res.send(result)
+        } catch (error) {
+            res.status(404).send(new Respond(0, error.message))
+        }
     }
 })
 
-responsableRouter.delete('/responsable/:id', async (req, res) => {
-    const idResponsable = req.params.id
+responsableRouter.delete('/responsable/:id', verifySession, async (req, res) => {
+    const { user } = req.session
 
-    try {
-        const result = new Respond(1, await ResponsableController.deleteResponsable(idResponsable))
-
-        res.send(result)
-    } catch (error) {
-        res.status(404).send(new Respond(0, error.message))
+    if (!user) {    
+        res.status(403).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const idResponsable = req.params.id
+    
+        try {
+            const result = new Respond(1, await ResponsableController.deleteResponsable(idResponsable))
+    
+            res.send(result)
+        } catch (error) {
+            res.status(404).send(new Respond(0, error.message))
+        }
     }
 })
 
