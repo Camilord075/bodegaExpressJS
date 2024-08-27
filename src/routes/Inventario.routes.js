@@ -12,12 +12,16 @@ inventarioRouter.get('/inventario', verifySession, async (req, res) => {
     const { user } = req.session
 
     if (!user) {    
-        res.status(403).send(new Respond(0, 'Access not Authorized'))
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
     } else {
-        const result = await InventarioController.exportInventario()
-    
-        res.attachment(`InventarioExport${result.date}.csv`)
-        res.send(result.csv)
+        try {
+            const result = await InventarioController.exportInventario()
+        
+            res.attachment(`InventarioExport${result.date}.csv`)
+            res.send(result.csv)
+        } catch (error) {
+            res.status(404).send(new Respond(0, error.message))
+        }
     }
 })
 

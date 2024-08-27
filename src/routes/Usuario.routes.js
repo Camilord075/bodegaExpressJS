@@ -60,7 +60,7 @@ usuarioRouter.post('/login', async (req, res) => {
 })
 
 usuarioRouter.post('/logout', (req, res) => {
-    res.clearCookie('access_token').json({ message: 'Logout successful' })
+    res.clearCookie('access_token').send(new Respond(1, 'Logout successful'))
 })
 
 export default usuarioRouter

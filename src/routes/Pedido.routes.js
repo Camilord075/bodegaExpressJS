@@ -69,7 +69,7 @@ pedidoRouter.patch('/pedidos/checking/:id', verifySession, async (req, res) => {
     const { user } = req.session
 
     if (!user) {    
-        res.status(403).send(new Respond(0, 'Access not Authorized'))
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
     } else {
         const idPedido = req.params.id
     

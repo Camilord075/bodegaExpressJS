@@ -28,7 +28,7 @@ productoRouter.post('/producto', verifySession, async (req, res) => {
     const { user } = req.session
     
     if (!user) {
-        res.status(403).send(new Respond(0, 'Access not Authorized'))
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
     } else {
         const { nombre, cantidadDisponible } = req.body
         const result = new Respond(1, await ProductoController.insertProducto(nombre, cantidadDisponible))
@@ -41,7 +41,7 @@ productoRouter.patch('/producto/:id', verifySession, async (req, res) => {
     const { user } = req.session
 
     if (!user) {    
-        res.status(403).send(new Respond(0, 'Access not Authorized'))
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
     } else {
         const idProducto = req.params.id
         const { nombre, cantidadDisponible } = req.body
@@ -60,7 +60,7 @@ productoRouter.delete('/producto/:id', verifySession, async (req, res) => {
     const { user } = req.session
 
     if (!user) {    
-        res.status(403).send(new Respond(0, 'Access not Authorized'))
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
     } else {
         const idProducto = req.params.id
         
