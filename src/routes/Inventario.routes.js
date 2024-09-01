@@ -3,8 +3,23 @@ import { InventarioController } from "../controllers/InventarioController.js";
 import { verifySession } from "./Usuario.routes.js";
 import { Respond } from "../controllers/responds/RespondController.js";
 import cookieParser from "cookie-parser";
+import multer from "multer";
 
 const inventarioRouter = Router()
+
+let filename = ""
+
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+        filename = "" + Date.now() + file.originalname
+        cb ("", filename)
+    }
+})
+
+const uploadFile = multer({
+    storage: storage
+})
 
 inventarioRouter.use(cookieParser())
 
@@ -25,9 +40,9 @@ inventarioRouter.get('/inventario', verifySession, async (req, res) => {
     }
 })
 
-inventarioRouter.post('/inventario', async (req, res) => {
+inventarioRouter.post('/inventario', uploadFile.single('fileCsv'), async (req, res) => {
     try {
-        const result = new Respond(1, await InventarioController.importInventario('prueba.csv'))
+        const result = new Respond(1, await InventarioController.importInventario(`./uploads/${filename}`))
     
         res.send(result)
     } catch (error) {
