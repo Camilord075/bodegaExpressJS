@@ -25,4 +25,14 @@ inventarioRouter.get('/inventario', verifySession, async (req, res) => {
     }
 })
 
+inventarioRouter.post('/inventario', async (req, res) => {
+    try {
+        const result = new Respond(1, await InventarioController.importInventario('prueba.csv'))
+    
+        res.send(result)
+    } catch (error) {
+        res.status(400).send(new Respond(0, error.message))
+    }
+})
+
 export default inventarioRouter
