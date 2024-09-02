@@ -7,13 +7,10 @@ import multer from "multer";
 
 const inventarioRouter = Router()
 
-let filename = ""
-
 const storage = multer.diskStorage({
     destination: './uploads/',
     filename: (req, file, cb) => {
-        filename = "" + Date.now() + file.originalname
-        cb ("", filename)
+        cb ("", Date.now() + file.originalname)
     }
 })
 
@@ -42,7 +39,7 @@ inventarioRouter.get('/inventario', verifySession, async (req, res) => {
 
 inventarioRouter.post('/inventario', uploadFile.single('fileCsv'), async (req, res) => {
     try {
-        const result = new Respond(1, await InventarioController.importInventario(`./uploads/${filename}`))
+        const result = new Respond(1, await InventarioController.importInventario(req.file.path))
     
         res.send(result)
     } catch (error) {
