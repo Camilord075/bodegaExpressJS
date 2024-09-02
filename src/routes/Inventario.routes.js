@@ -37,13 +37,19 @@ inventarioRouter.get('/inventario', verifySession, async (req, res) => {
     }
 })
 
-inventarioRouter.post('/inventario', uploadFile.single('fileCsv'), async (req, res) => {
-    try {
-        const result = new Respond(1, await InventarioController.importInventario(req.file.path))
-    
-        res.send(result)
-    } catch (error) {
-        res.status(400).send(new Respond(0, error.message))
+inventarioRouter.post('/inventario', verifySession, uploadFile.single('fileCsv'), async (req, res) => {
+    const { user } = req.session
+
+    if (!user) {    
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        try {
+            const result = new Respond(1, await InventarioController.importInventario(req.file.path))
+        
+            res.send(result)
+        } catch (error) {
+            res.status(400).send(new Respond(0, error.message))
+        }
     }
 })
 

@@ -44,6 +44,8 @@ export class InventarioController {
             const insert = await ProductoController.updateProducto(element.id, null, element.cantidad_disponible)
         })
 
+        const fileDelete = await fs.unlink(file)
+
         return 'Inventario has been updated'
     }
 }
