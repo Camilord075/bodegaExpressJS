@@ -53,23 +53,23 @@ inventarioRouter.post('/inventario', verifySession, uploadFile.single('fileCsv')
     }
 })
 
-inventarioRouter.patch('/input/:id'/*, verifySession**/, async (req, res) => {
-    /*const { user } = req.session
+inventarioRouter.patch('/input/:id', verifySession, async (req, res) => {
+    const { user } = req.session
 
     if (!user) {    
         res.status(401).send(new Respond(0, 'Access not Authorized'))
     } else {
-    }**/
-    const idProducto = req.params.id
-    const { cantidad } = req.body
-
-   try {
-    const input = new Respond(1, await InventarioController.inputInventario(idProducto, cantidad))
-
-    res.send(input)
-   } catch (error) {
-    res.status(404).send(error.message)
-   }
+        const idProducto = req.params.id
+        const { cantidad } = req.body
+    
+       try {
+            const input = new Respond(1, await InventarioController.inputInventario(idProducto, cantidad))
+    
+            res.send(input)
+       } catch (error) {
+            res.status(404).send(error.message)
+       }
+    }
 })
 
 export default inventarioRouter
