@@ -4,5 +4,7 @@ export const {
     DB_USERNAME = '',
     DB_PASS = '',
     DB_NAME = '',
-    DB_PORT = ''
+    DB_PORT = '',
+    JWT_SECRET_KEY = '',
+    SALT_ROUNDS = ''
 } = process.env
