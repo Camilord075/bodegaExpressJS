@@ -1,4 +1,5 @@
 import { pool } from "../database/database.js";
+import { InventarioController } from "./InventarioController.js";
 import { ListaController } from "./ListaController.js";
 import { ResponsableController } from "./ResponsableController.js";
 
@@ -64,11 +65,22 @@ export class PedidoController {
 
     static async checkPedido(idPedido) {
         try {
-            const [check] = await pool.query('UPDATE pedido SET status = 1 WHERE id = ?;', [idPedido])
+            const pedido = await this.findOne(idPedido)
 
-            return check
+            if (pedido.status === 1) {
+                throw new Error('This Pedido was checked before')
+            } else {
+                const output = await InventarioController.outputInventario(idPedido)
+                const [check] = await pool.query('UPDATE pedido SET status = 1 WHERE id = ?;', [idPedido])
+
+                return output
+            }
         } catch (error) {
-            throw new Error('This Pedido does not exists')
+            if (error.message) {
+                throw new Error(error.message)
+            } else {
+                throw new Error('This Pedido does not exists')
+            }
         }
     }
 }

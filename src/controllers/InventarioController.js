@@ -1,7 +1,9 @@
 import { ProductoController } from "./ProductoController.js"
 import { Parser } from "json2csv"
-import * as fs from 'fs/promises'
 import { CSVParser } from "./parser/CSVParser.js"
+import { pool } from "../database/database.js"
+import * as fs from 'fs/promises'
+import { ListaController } from "./ListaController.js"
 
 export class InventarioController {
     static async exportInventario() {
@@ -47,5 +49,39 @@ export class InventarioController {
         const fileDelete = await fs.unlink(file)
 
         return 'Inventario has been updated'
+    }
+
+    static async outputInventario(idPedido) {
+        const lista = await ListaController.getLista(idPedido)
+
+        for (let i = 0; i < lista.length; i += 1) {
+            const producto = await ProductoController.findOne(lista[i].id_producto)
+
+            if (!producto) {
+                throw new Error('One item on Lista does not exists')
+            }
+
+            if (producto.cantidad_disponible <= lista[i].cantidad) {
+                throw new Error(`The Producto ${producto.nombre} does not have the stock to complete this Pedido`)
+            }
+        }
+
+        lista.forEach(async (element) => {
+            const output = await pool.query('UPDATE producto set cantidad_disponible = cantidad_disponible - ? WHERE id = ?', [element.cantidad, element.id_producto])
+        })
+
+        return 'Output completed'
+    }
+
+    static async inputInventario(idProducto, cantidad) {
+        const producto = await ProductoController.findOne(idProducto)
+
+        if (!producto) {
+            throw new Error('This Producto does not exists')
+        } else  {
+            const input = await ProductoController.updateProducto(idProducto, null, producto.cantidad_disponible + Number(cantidad))
+
+            return input
+        }
     }
 }

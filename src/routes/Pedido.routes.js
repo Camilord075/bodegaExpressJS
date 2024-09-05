@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { PedidoController } from "../controllers/PedidoController.js";
 import { Respond } from "../controllers/responds/RespondController.js";
+import { ListaController } from "../controllers/ListaController.js";
 import { verifySession } from "./Usuario.routes.js";
 import cookieParser from "cookie-parser";
 
@@ -74,9 +75,9 @@ pedidoRouter.patch('/pedidos/checking/:id', verifySession, async (req, res) => {
         const idPedido = req.params.id
     
         try {
-            const result = new Respond(1, await PedidoController.checkPedido(idPedido))
-    
-            res.send(result)
+            const check = new Respond(1, await PedidoController.checkPedido(idPedido))
+            
+            res.send(check)
         } catch (error) {
             res.status(404).send(new Respond(0, error.message))
         }

@@ -7,7 +7,7 @@ export class ListaController {
         const findPedido = await PedidoController.findOne(id)
         if (!findPedido) throw new Error('This Pedido does not exists')
 
-        const [lista] = await pool.query('SELECT producto.nombre AS nombre_producto, listas.cantidad FROM listas INNER JOIN producto ON listas.id_producto = producto.id WHERE id_pedido = ?;', [id])
+        const [lista] = await pool.query('SELECT id_producto, producto.nombre AS nombre_producto, listas.cantidad FROM listas INNER JOIN producto ON listas.id_producto = producto.id WHERE id_pedido = ?;', [id])
 
         return lista
     }
