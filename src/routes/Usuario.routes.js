@@ -22,15 +22,21 @@ export const verifySession = (req, res, next) => {
     next()
 }
 
-usuarioRouter.post('/register', async (req, res) => {
-    const { nombre, correo, pass } = req.body
+usuarioRouter.post('/register', verifySession, async (req, res) => {
+    const { user } = req.session
 
-    try {
-        const result = new Respond(1, await UsuarioController.signUp(nombre, correo, pass))
-
-        res.send(result)
-    } catch (error) {
-        res.status(500).send(error.message)
+    if (!user || user.rol !== 'root') {    
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const { nombre, correo, pass } = req.body
+    
+        try {
+            const result = new Respond(1, await UsuarioController.signUp(nombre, correo, pass))
+    
+            res.send(result)
+        } catch (error) {
+            res.status(500).send(error.message)
+        }
     }
 })
 
@@ -59,8 +65,14 @@ usuarioRouter.post('/login', async (req, res) => {
     }
 })
 
-usuarioRouter.post('/logout', (req, res) => {
-    res.clearCookie('access_token').send(new Respond(1, 'Logout successful'))
+usuarioRouter.post('/logout', verifySession, (req, res) => {
+    const { user } = req.session
+
+    if (!user) {    
+        res.status(401).send(new Respond(0, 'There is not a session open'))
+    } else {
+        res.clearCookie('access_token').send(new Respond(1, 'Logout successful'))
+    }
 })
 
 export default usuarioRouter

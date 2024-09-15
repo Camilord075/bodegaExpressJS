@@ -18,6 +18,10 @@ export class ListaController {
             throw new Error('This Producto does not exists')
         }
 
+        if (findProducto.cantidad_disponible < cantidad) {
+            throw new Error('This Producto does not have the stock enough to complete this Pedido')
+        }
+
         const [result] = await pool.query('INSERT INTO listas (id_producto, id_pedido, cantidad) VALUES (?, ?, ?);', [idProducto, idPedido, cantidad])
 
         return result
