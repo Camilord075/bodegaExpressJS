@@ -40,28 +40,46 @@ usuarioRouter.post('/register', verifySession, async (req, res) => {
     }
 })
 
-usuarioRouter.post('/login', async (req, res) => {
-    const { correo, pass } = req.body
+usuarioRouter.post('/login', verifySession, async (req, res) => {
+    const { user } = req.session
 
-    try {
-        const user = await UsuarioController.signIn(correo, pass)
+    if (!user) {
+        const { correo, pass } = req.body
+    
+        try {
+            const user = await UsuarioController.signIn(correo, pass)
+    
+            const token = jwt.sign({
+                id: user.id, nombre: user.nombre, rol: user.rol, correo: user.correo},
+                JWT_SECRET_KEY,
+                {
+                    expiresIn: '1h'
+                }
+            )
+    
+            res.cookie('access_token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV == 'production',
+                sameSite: 'strict',
+                maxAge: 100 * 60 * 60
+            }).send( { user } )
+        } catch (error) {
+            res.status(401).send(error.message)
+        }
+    } else {
+        const { correo } = req.body
 
-        const token = jwt.sign({
-            id: user.id, nombre: user.nombre, rol: user.rol},
-            JWT_SECRET_KEY,
-            {
-                expiresIn: '1h'
-            }
-        )
-
-        res.cookie('access_token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV == 'production',
-            sameSite: 'strict',
-            maxAge: 100 * 60 * 60
-        }).send( { user } )
-    } catch (error) {
-        res.status(401).send(error.message)
+        if (user.correo === correo) {
+            res.status(202).send(new Respond(0, {
+                mensaje: 'You have a session open with this user',
+                session: user
+            }))    
+        } else {
+            res.status(400).send(new Respond(0, {
+                mensaje: 'There is a session open, please logout',
+                session: user
+            }))
+        }
     }
 })
 
