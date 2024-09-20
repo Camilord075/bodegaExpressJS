@@ -1,0 +1,2 @@
+En esta carpeta se montarán todos los archivos .csv que harán parte de la interfaz de lectura 
+de archivos que tiene la aplicación
