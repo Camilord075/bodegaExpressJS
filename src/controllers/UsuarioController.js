@@ -5,14 +5,29 @@ import crypto from 'node:crypto'
 import bcrypt from 'bcrypt'
 
 export class UsuarioController {
-    static async findOne (id) {
+    static async getUsuarios() {
+        const [usuarios] = await pool.query('SELECT * FROM usuarios')
+        const publicUsers = []
+
+        usuarios.forEach((usuario) => {
+            const { password: _, ... publicUser } = usuario
+
+            publicUsers.push(publicUser)
+        })
+
+        return publicUsers
+    }
+
+    static async findOne(id) {
         const [found] = await pool.query('SELECT * FROM usuarios WHERE id = ?;', [id])
 
         if (found.length <= 0) {
             return false
         }
 
-        return found[0]
+        const { password: _, ... publicUser } = found[0]
+
+        return publicUser
     }
 
     static async findOneByCorreo (correo) {

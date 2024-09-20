@@ -93,4 +93,33 @@ usuarioRouter.post('/logout', verifySession, (req, res) => {
     }
 })
 
+usuarioRouter.get('/usuarios', verifySession, async (req, res) => {
+    const { user } = req.session
+
+    if (!user || user.rol !== 'root') {
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const usuarios = new Respond(1, await UsuarioController.getUsuarios())
+
+        res.send(usuarios)
+    }
+})
+
+usuarioRouter.get('/usuarios/:id', verifySession, async (req, res) => {
+    const { user } = req.session
+
+    if (!user || user.rol !== 'root') {
+        res.status(401).send(new Respond(0, 'Access not Authorized'))
+    } else {
+        const id = req.params.id
+        const usuario = await UsuarioController.findOne(id)
+
+        if (!usuario) {
+            res.status(404).send(new Respond(0, 'This Usuario does not exists'))
+        } else {
+            res.send(new Respond(1, usuario))
+        }
+    }
+})
+
 export default usuarioRouter
