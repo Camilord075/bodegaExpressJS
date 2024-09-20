@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { UsuarioController } from "../controllers/UsuarioController.js";
 import { Respond } from "../controllers/responds/RespondController.js";
-import { JWT_SECRET_KEY } from "../../config.js";
+import { JWT_SECRET_KEY } from "../../configEnvExample.js";
 import cookieParser from "cookie-parser";
 import jwt from 'jsonwebtoken'
 

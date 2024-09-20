@@ -1,6 +1,6 @@
 import { pool } from '../database/database.js'
 import { Validator } from '../middleware/Validator.js'
-import { SALT_ROUNDS } from '../../config.js'
+import { SALT_ROUNDS } from '../../configEnvExample.js'
 import crypto from 'node:crypto'
 import bcrypt from 'bcrypt'
 
