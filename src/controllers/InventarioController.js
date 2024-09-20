@@ -62,7 +62,7 @@ export class InventarioController {
             }
 
             if (producto.cantidad_disponible <= lista[i].cantidad) {
-                throw new Error(`The Producto ${producto.nombre} does not have the stock to complete this Pedido`)
+                throw new Error(`The Producto: ${producto.nombre}, does not have the stock to complete this Pedido`)
             }
         }
 
