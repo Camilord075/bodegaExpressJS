@@ -6,5 +6,5 @@ export const {
     DB_NAME = '',
     DB_PORT = '',
     JWT_SECRET_KEY = '',
-    SALT_ROUNDS = 0
+    SALT_ROUNDS = ''
 } = process.env
